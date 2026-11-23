@@ -793,6 +793,7 @@ function populateConfigForm(state) {
 
   setVal('cfg-nombre-comunidad', state.config?.nombre_comunidad || 'Pequeños Exploradores');
   setVal('cfg-whatsapp', state.config?.whatsapp_admin || '');
+  setVal('cfg-llave-breb', state.config?.llave_breb || '');
   setVal('cfg-correo', state.config?.correo_contacto || '');
   setVal('cfg-politica', state.config?.politica_datos || '');
 
@@ -829,6 +830,7 @@ async function saveCommunityConfig(refreshAllData, notifyBanner) {
   const payload = {
     nombre_comunidad: document.getElementById('cfg-nombre-comunidad')?.value.trim() || 'Pequeños Exploradores',
     whatsapp_admin: document.getElementById('cfg-whatsapp')?.value.trim() || '',
+    llave_breb: document.getElementById('cfg-llave-breb')?.value.trim() || '',
     correo_contacto: document.getElementById('cfg-correo')?.value.trim() || '',
     politica_datos: document.getElementById('cfg-politica')?.value.trim() || ''
   };

@@ -396,6 +396,15 @@ function renderPaymentStep(state, salida, registro) {
   const titleEl = document.querySelector('#inscripcion-pago-wrapper .panel-title');
   const subtitleEl = document.getElementById('res-subtitulo');
   const nequiBox = document.getElementById('nequi-payment-box');
+  const brebBox = document.getElementById('breb-payment-box');
+  const selectorPagos = document.getElementById('selector-medios-pago');
+  const btnNequi = document.getElementById('elegir-nequi');
+  const btnBreb = document.getElementById('elegir-breb');
+  const btnCopiarBreb = document.getElementById('btn-copiar-breb');
+  const llaveBreb = String(state.config?.llave_breb || '').trim();
+  const llaveVisible = document.getElementById('breb-llave-visible');
+  if (llaveVisible) llaveVisible.textContent = llaveBreb;
+  if (btnBreb) btnBreb.classList.toggle('hidden', !llaveBreb);
   const waActionBox = document.querySelector('.wa-action-box');
   const codigoRow = document.getElementById('res-codigo')?.closest('.receipt-row, div');
 
@@ -404,6 +413,8 @@ function renderPaymentStep(state, salida, registro) {
     if (subtitleEl) subtitleEl.textContent = `Tu cupo para "${salida.nombre}" ha quedado registrado exitosamente. Te esperamos.`;
     
     if (nequiBox) nequiBox.classList.add('hidden');
+    if (brebBox) brebBox.classList.add('hidden');
+    if (selectorPagos) selectorPagos.classList.add('hidden');
     if (waActionBox) waActionBox.classList.add('hidden');
     if (codigoRow) codigoRow.style.display = 'none';
 
@@ -413,8 +424,10 @@ function renderPaymentStep(state, salida, registro) {
     }
   } else {
     if (titleEl) titleEl.textContent = '¡Preinscripción Registrada!';
-    if (subtitleEl) subtitleEl.textContent = 'Guarda tu código único. Tu cupo quedará confirmado cuando el administrador verifique el pago en Nequi.';
+    if (subtitleEl) subtitleEl.textContent = 'Guarda tu código único. Tu cupo quedará confirmado cuando el administrador verifique el pago.';
     if (nequiBox) nequiBox.classList.remove('hidden');
+    if (brebBox) brebBox.classList.add('hidden');
+    if (selectorPagos) selectorPagos.classList.toggle('hidden', !llaveBreb);
     if (waActionBox) waActionBox.classList.remove('hidden');
     if (codigoRow) codigoRow.style.display = '';
 
@@ -434,29 +447,64 @@ function renderPaymentStep(state, salida, registro) {
       .map((p) => (incluirEdad ? `${p.nombre} (${p.edad} años)` : p.nombre))
       .join('; ');
 
+    let medioPago = 'Nequi';
     const mensajeLines = [
       `Hola *${state.config?.nombre_comunidad || 'Pequeños Exploradores'}*, envío confirmación de inscripción:`,
       `• *Código:* ${registro.codigo}`,
       `• *Actividad:* ${salida.nombre}`,
       `• *Participantes (${registro.participantes.length}):* ${nombresParticipantes}`,
       `• *Valor total:* ${formatCOP(registro.total_pagar)} COP`,
-      `Realicé el pago por Nequi y adjunto el comprobante para su verificación.`
+      `Medio de pago seleccionado: Nequi. Adjunto el comprobante para su verificación.`
     ].join('\n');
 
-    const waUrl = adminPhone
-      ? `https://wa.me/${adminPhone}?text=${encodeURIComponent(mensajeLines)}`
-      : `https://wa.me/?text=${encodeURIComponent(mensajeLines)}`;
-
     const btnWa = document.getElementById('btn-whatsapp-confirmar');
+    const actualizarWhatsapp = () => {
+      const texto = mensajeLines
+        .map(linea => linea.startsWith('Medio de pago seleccionado:')
+          ? `Medio de pago seleccionado: ${medioPago}. Adjunto el comprobante para su verificación.`
+          : linea)
+        .join('\\n');
+      const waUrl = adminPhone
+        ? `https://wa.me/${adminPhone}?text=${encodeURIComponent(texto)}`
+        : `https://wa.me/?text=${encodeURIComponent(texto)}`;
+      if (btnWa) btnWa.href = waUrl;
+    };
+
+    const seleccionarMedio = (medio) => {
+      if (medio === 'Bre-B' && !llaveBreb) return;
+      medioPago = medio;
+      nequiBox?.classList.toggle('hidden', medio !== 'Nequi');
+      brebBox?.classList.toggle('hidden', medio !== 'Bre-B');
+      btnNequi?.classList.toggle('btn-primary', medio === 'Nequi');
+      btnNequi?.classList.toggle('btn-outline', medio !== 'Nequi');
+      btnBreb?.classList.toggle('btn-primary', medio === 'Bre-B');
+      btnBreb?.classList.toggle('btn-outline', medio !== 'Bre-B');
+      btnNequi?.setAttribute('aria-pressed', String(medio === 'Nequi'));
+      btnBreb?.setAttribute('aria-pressed', String(medio === 'Bre-B'));
+      actualizarWhatsapp();
+    };
+
+    if (btnNequi) btnNequi.onclick = () => seleccionarMedio('Nequi');
+    if (btnBreb) btnBreb.onclick = () => seleccionarMedio('Bre-B');
+    if (btnCopiarBreb) {
+      btnCopiarBreb.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(llaveBreb);
+          btnCopiarBreb.textContent = '¡Llave copiada!';
+        } catch {
+          window.prompt('Copia la llave Bre-B:', llaveBreb);
+        }
+      };
+    }
     if (btnWa) {
-      btnWa.href = waUrl;
-      btnWa.textContent = 'CONFIRMAR PAGO POR WHATSAPP';
+      btnWa.textContent = 'ENVIAR COMPROBANTE POR WHATSAPP';
       btnWa.onclick = async () => {
         if (supabase) {
           await supabase.rpc('reportar_pago_familia', { p_codigo: registro.codigo });
         }
       };
     }
+    seleccionarMedio('Nequi');
   }
 
   const incluirEdad = salida.incluir_edad !== false;
