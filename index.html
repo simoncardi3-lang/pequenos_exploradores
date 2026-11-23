@@ -9,6 +9,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="stylesheet" href="./css/navidad.css" />
+
+  <script src="./js/navidad.js" defer></script>
+
+  <link rel="stylesheet" href="./css/pagos.css" />
 </head>
 <body>
   <!-- BARRA DE NAVEGACIÓN PRINCIPAL -->
@@ -215,9 +220,17 @@
               </div>
             </div>
 
+            <div id="selector-medios-pago" class="nequi-box hidden">
+              <h2>Elige tu medio de pago</h2>
+              <div class="pago-opciones">
+                <button type="button" id="elegir-nequi" class="btn btn-primary" aria-pressed="true">Nequi</button>
+                <button type="button" id="elegir-breb" class="btn btn-outline hidden" aria-pressed="false">Bre-B</button>
+              </div>
+            </div>
+
             <div id="nequi-payment-box" class="nequi-box">
               <div class="nequi-header">
-                <span class="nequi-tag">PAGO ÚNICAMENTE POR NEQUI</span>
+                <span class="nequi-tag">PAGO POR NEQUI</span>
                 <h2>Instrucciones para completar tu aporte</h2>
               </div>
 
@@ -240,12 +253,23 @@
               </div>
             </div>
 
+            <div id="breb-payment-box" class="nequi-box hidden">
+              <div class="nequi-header">
+                <span class="nequi-tag">TRANSFERENCIA CON BRE-B</span>
+                <h2>Paga usando la llave Bre-B</h2>
+              </div>
+              <p>Abre tu aplicación bancaria, selecciona Bre-B y usa la siguiente llave:</p>
+              <p><strong id="breb-llave-visible" class="breb-llave"></strong></p>
+              <button type="button" id="btn-copiar-breb" class="btn btn-outline">Copiar llave</button>
+              <p>Antes de transferir, verifica el destinatario y el valor. Conserva el comprobante para enviarlo por WhatsApp.</p>
+            </div>
+
             <div class="wa-action-box">
               <a id="btn-whatsapp-confirmar" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-block btn-lg">
                 CONFIRMAR PAGO POR WHATSAPP
               </a>
               <p class="wa-disclaimer">
-                Importante: abrir WhatsApp o enviar el comprobante no marca automáticamente el pago como aprobado. Un administrador verificará el ingreso en Nequi para confirmar tu cupo.
+                Importante: abrir WhatsApp o enviar el comprobante no marca automáticamente el pago como aprobado. Un administrador verificará el ingreso del pago por Nequi o Bre-B para confirmar tu cupo.
               </p>
             </div>
 
@@ -313,8 +337,8 @@
 
           <div class="admin-tabs" role="tablist">
             <button type="button" class="admin-tab active" data-tab="tab-salidas">1. Salidas y Listas</button>
-            <button type="button" class="admin-tab" data-tab="tab-inscripciones">2. Inscripciones y Pagos Nequi</button>
-            <button type="button" class="admin-tab" data-tab="tab-config">3. QR Nequi y Configuración</button>
+            <button type="button" class="admin-tab" data-tab="tab-inscripciones">2. Inscripciones y Pagos</button>
+            <button type="button" class="admin-tab" data-tab="tab-config">3. Medios de pago y Configuración</button>
           </div>
 
           <div id="tab-salidas" class="admin-tab-panel active">
@@ -384,6 +408,11 @@
                   <div class="form-group">
                     <label for="cfg-politica" class="form-label">Aviso de tratamiento y conservación de datos personales</label>
                     <textarea id="cfg-politica" class="form-control" rows="3"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="cfg-llave-breb" class="form-label">Llave Bre-B para recibir pagos</label>
+                    <input type="text" id="cfg-llave-breb" class="form-control" placeholder="Ingresa tu llave Bre-B" autocomplete="off" />
+                    <p class="form-hint">Esta llave será visible para las familias. No introduzcas contraseñas ni claves bancarias.</p>
                   </div>
                   <button type="submit" id="btn-save-config" class="btn btn-primary">Guardar Configuración</button>
                 </form>
