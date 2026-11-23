@@ -1,0 +1,346 @@
+
+/* ==========================================
+   GENERAL — TEMA DE NAVIDAD
+   Capa visual independiente
+   ========================================== */
+
+:root {
+  --navidad-rojo: #a92335;
+  --navidad-verde: #176b50;
+  --navidad-verde-oscuro: #104c3a;
+  --navidad-dorado: #d4aa52;
+  --navidad-crema: #fffaf0;
+}
+
+/* Fondo navideño del portal público */
+body.navidad-activa {
+  background-color: var(--navidad-crema);
+  background-image:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(212, 170, 82, 0.10),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 65%,
+      rgba(23, 107, 80, 0.07),
+      transparent 40%
+    );
+}
+
+/* Decoración superior */
+body.navidad-activa::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    #a92335 0 40px,
+    #176b50 40px 80px,
+    #d4aa52 80px 100px
+  );
+}
+
+/* Capa de nieve: nunca bloquea clics */
+#general-nieve-navidad {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9000;
+}
+
+.general-copo {
+  position: absolute;
+  top: -30px;
+  color: #ffffff;
+  text-shadow:
+    0 0 2px rgba(23, 107, 80, 0.35),
+    0 0 5px rgba(23, 107, 80, 0.18);
+  opacity: 0;
+  animation: general-nevada linear infinite;
+  user-select: none;
+  will-change: transform;
+}
+
+@keyframes general-nevada {
+  0% {
+    transform: translate3d(0, -30px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.75;
+  }
+  90% {
+    opacity: 0.75;
+  }
+  100% {
+    transform:
+      translate3d(35px, 105vh, 0)
+      rotate(240deg);
+    opacity: 0;
+  }
+}
+
+/* Luces de Navidad */
+#general-luces-navidad {
+  position: fixed;
+  top: 5px;
+  left: 0;
+  right: 0;
+  height: 27px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 9001;
+}
+
+.general-luz {
+  position: relative;
+  width: 9px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-luz);
+  box-shadow: 0 0 10px var(--color-luz);
+  animation: general-brillo 2s ease-in-out infinite;
+  animation-delay: var(--retraso);
+}
+
+.general-luz::before {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 5px;
+  top: -4px;
+  left: 1px;
+  border-radius: 2px;
+  background: #365345;
+}
+
+@keyframes general-brillo {
+  0%, 100% {
+    opacity: 0.55;
+    filter: brightness(0.85);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.35);
+  }
+}
+
+/* Mensaje flotante */
+#general-saludo-navidad {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 8999;
+  max-width: min(310px, calc(100vw - 36px));
+  padding: 12px 17px;
+  border: 1px solid rgba(212, 170, 82, 0.55);
+  border-radius: 16px;
+  color: #fffaf0;
+  background: linear-gradient(
+    135deg,
+    #176b50,
+    #104c3a
+  );
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.16);
+  font: 600 13px/1.5 system-ui, sans-serif;
+  text-align: center;
+  pointer-events: none;
+  animation: general-entrada 0.7s ease both;
+}
+
+@keyframes general-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Solo decorar elementos sin cambiar su estructura */
+body.navidad-activa .navidad-decoracion {
+  position: relative;
+}
+
+body.navidad-activa .navidad-decoracion::after {
+  content: "✦";
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  color: var(--navidad-dorado);
+  font-size: 18px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Móviles */
+@media (max-width: 600px) {
+  #general-saludo-navidad {
+    bottom: 12px;
+    right: 12px;
+    padding: 9px 13px;
+    font-size: 11px;
+  }
+
+  #general-luces-navidad {
+    height: 20px;
+  }
+
+  .general-luz {
+    width: 6px;
+    height: 10px;
+  }
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .general-copo,
+  .general-luz,
+  #general-saludo-navidad {
+    animation: none !important;
+  }
+
+  .general-copo {
+    display: none;
+  }
+}
+
+/* ========================================
+   GENERAL — NAVIDAD PREMIUM
+   Mejoras visuales adicionales
+   ======================================== */
+
+/* Encabezado festivo */
+body.navidad-activa .site-header {
+  background: #f8fff9;
+  border-bottom: 1px solid #d4aa52;
+  box-shadow: 0 3px 15px rgba(20, 85, 60, 0.08);
+}
+
+body.navidad-activa .brand-title {
+  color: #176b50;
+}
+
+body.navidad-activa .brand-eyebrow {
+  color: #a92335;
+}
+
+/* Tarjeta principal */
+body.navidad-activa .hero-card {
+  border: 1px solid rgba(212, 170, 82, 0.55);
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #fffdf7 60%,
+    #f0f9f2 100%
+  );
+  box-shadow: 0 15px 45px rgba(23, 107, 80, 0.12);
+}
+
+/* Franja navideña */
+body.navidad-activa .seg-yellow {
+  background: #d4aa52;
+}
+
+body.navidad-activa .seg-red {
+  background: #b32638;
+}
+
+body.navidad-activa .seg-green {
+  background: #176b50;
+}
+
+body.navidad-activa .seg-blue {
+  background: #d4aa52;
+}
+
+/* Título principal */
+body.navidad-activa .hero-title {
+  color: #176b50;
+}
+
+/* Insignias */
+body.navidad-activa .tag-pill {
+  background: #fff5e2;
+  color: #8d2634;
+  border-color: #e8cf9d;
+}
+
+/* Botones principales */
+body.navidad-activa .btn-primary {
+  background: linear-gradient(
+    135deg,
+    #176b50,
+    #104c3a
+  );
+  border-color: #176b50;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(23, 107, 80, 0.16);
+}
+
+body.navidad-activa .btn-primary:hover {
+  background: #a92335;
+  border-color: #a92335;
+  color: #ffffff;
+}
+
+/* Navegación */
+body.navidad-activa .nav-link.active {
+  background: #176b50;
+  color: white;
+}
+
+/* Tarjetas de actividades */
+body.navidad-activa .salida-card,
+body.navidad-activa .card-panel {
+  border-color: rgba(212, 170, 82, 0.4);
+  box-shadow: 0 8px 24px rgba(23, 107, 80, 0.07);
+}
+
+/* Sección inferior de la portada */
+body.navidad-activa .hero-about {
+  background: #f0f7ef;
+  border-top: 1px solid #e0d4b7;
+}
+
+/* Pie de página */
+body.navidad-activa .site-footer {
+  background: #f1f8f2;
+  border-top: 1px solid #d4aa52;
+}
+
+/* Decoración en el título de portada */
+body.navidad-activa .hero-title::before {
+  content: "🎄 ✨";
+  display: block;
+  font-family: system-ui, sans-serif;
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+
+body.navidad-activa .hero-title::after {
+  content: "❄️ 🎁 ❄️";
+  display: block;
+  font-family: system-ui, sans-serif;
+  font-size: 21px;
+  margin-top: 12px;
+}
+
+/* Mantener el panel administrativo normal */
+body.navidad-activa:has(#view-admin.active)
+  .hero-title::before,
+body.navidad-activa:has(#view-admin.active)
+  .hero-title::after {
+  display: none;
+}
